@@ -25,6 +25,8 @@ class _HomeState extends State<Home> {
 
   List<String> selectedSuggestions = [];
 
+  bool isExpanded = false;
+
   void toggleSuggestion(String suggestion) {
     setState(() {
       if (selectedSuggestions.contains(suggestion)) {
@@ -149,14 +151,26 @@ class _HomeState extends State<Home> {
                       padding: EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        border: Border.all(
-                          color: const Color.fromARGB(255, 22, 117, 121),
-                          width: 1.5,
-                        ),
+                        border:
+                            isExpanded == true
+                                ? Border.all(
+                                  color: const Color.fromARGB(
+                                    255,
+                                    22,
+                                    117,
+                                    121,
+                                  ),
+                                  width: 1.5,
+                                )
+                                : null,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: TextFormField(
-                        onTap: () {},
+                        onTap: () {
+                          setState(() {
+                            isExpanded = !isExpanded;
+                          });
+                        },
                         textAlignVertical: TextAlignVertical.center,
                         readOnly: true,
                         decoration: InputDecoration(
@@ -169,7 +183,9 @@ class _HomeState extends State<Home> {
                             width: 10,
                           ),
                           suffixIcon: Image.asset(
-                            "assets/up_chevron.png",
+                            isExpanded == true
+                                ? "assets/up_chevron.png"
+                                : "assets/down_chevron.png",
                             scale: 25,
                             height: 5,
                             width: 5,
@@ -187,53 +203,54 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     SizedBox(height: 10),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Wrap(
-                        spacing: 5.0,
-                        runSpacing: 5.0,
-                        children:
-                            suggestions.map((suggestion) {
-                              final isSelected = selectedSuggestions.contains(
-                                suggestion,
-                              );
-                              return GestureDetector(
-                                onTap: () => toggleSuggestion(suggestion),
-                                child: Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 5),
-                                  padding: EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color:
-                                        isSelected
-                                            ? Colors.black
-                                            : Colors.white,
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        suggestion,
-                                        style: TextStyle(
-                                          color:
-                                              isSelected
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
+                    if (isExpanded == true)
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Wrap(
+                          spacing: 5.0,
+                          runSpacing: 5.0,
+                          children:
+                              suggestions.map((suggestion) {
+                                final isSelected = selectedSuggestions.contains(
+                                  suggestion,
+                                );
+                                return GestureDetector(
+                                  onTap: () => toggleSuggestion(suggestion),
+                                  child: Container(
+                                    margin: EdgeInsets.symmetric(horizontal: 5),
+                                    padding: EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          isSelected
+                                              ? Colors.black
+                                              : Colors.white,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          suggestion,
+                                          style: TextStyle(
+                                            color:
+                                                isSelected
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                      ),
-                                      FaIcon(
-                                        FontAwesomeIcons.plus,
-                                        size: 10,
-                                        color: Colors.grey,
-                                      ),
-                                    ],
+                                        FaIcon(
+                                          FontAwesomeIcons.plus,
+                                          size: 10,
+                                          color: Colors.grey,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              );
-                            }).toList(),
+                                );
+                              }).toList(),
+                        ),
                       ),
-                    ),
                   ],
                 ),
                 Container(
